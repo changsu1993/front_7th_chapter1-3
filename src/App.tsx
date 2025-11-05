@@ -290,6 +290,15 @@ function App() {
     resetForm();
   };
 
+  const handleCellClick = (date: Date) => {
+    // Format date as YYYY-MM-DD for the date input
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    setDate(formattedDate);
+  };
+
   const renderWeekView = () => {
     const weekDates = getWeekDates(currentDate);
     return (
@@ -311,6 +320,8 @@ function App() {
                 {weekDates.map((date) => (
                   <TableCell
                     key={date.toISOString()}
+                    data-testid={`week-cell-${date.toISOString().split('T')[0]}`}
+                    onClick={() => handleCellClick(date)}
                     sx={{
                       height: '120px',
                       verticalAlign: 'top',
@@ -318,6 +329,10 @@ function App() {
                       padding: 1,
                       border: '1px solid #e0e0e0',
                       overflow: 'hidden',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: '#f5f5f5',
+                      },
                     }}
                   >
                     <Typography variant="body2" fontWeight="bold">
@@ -396,9 +411,17 @@ function App() {
                     const dateString = day ? formatDate(currentDate, day) : '';
                     const holiday = holidays[dateString];
 
+                    const cellDate = day
+                      ? new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+                      : null;
+
                     return (
                       <TableCell
                         key={dayIndex}
+                        data-testid={
+                          cellDate ? `month-cell-${cellDate.toISOString().split('T')[0]}` : undefined
+                        }
+                        onClick={() => cellDate && handleCellClick(cellDate)}
                         sx={{
                           height: '120px',
                           verticalAlign: 'top',
@@ -407,6 +430,12 @@ function App() {
                           border: '1px solid #e0e0e0',
                           overflow: 'hidden',
                           position: 'relative',
+                          cursor: day ? 'pointer' : 'default',
+                          '&:hover': day
+                            ? {
+                                backgroundColor: '#f5f5f5',
+                              }
+                            : {},
                         }}
                       >
                         {day && (
