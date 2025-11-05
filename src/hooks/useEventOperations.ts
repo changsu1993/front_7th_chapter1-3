@@ -40,7 +40,10 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
   const saveEvent = async (eventData: Event | EventForm) => {
     try {
       let response;
-      if (editing) {
+      // Check if this is an update: editing flag is true, OR event has an id
+      const isUpdating = editing || !!(eventData as Event).id;
+
+      if (isUpdating) {
         const editingEvent = {
           ...eventData,
           // ! TEST CASE
@@ -70,7 +73,7 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
 
       await fetchEvents();
       onSave?.();
-      enqueueSnackbar(editing ? SUCCESS_MESSAGES.EVENT_UPDATED : SUCCESS_MESSAGES.EVENT_ADDED, {
+      enqueueSnackbar(isUpdating ? SUCCESS_MESSAGES.EVENT_UPDATED : SUCCESS_MESSAGES.EVENT_ADDED, {
         variant: 'success',
       });
     } catch (error) {

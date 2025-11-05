@@ -9,6 +9,38 @@ export const server = setupServer(...handlers);
 
 vi.stubEnv('TZ', 'UTC');
 
+// DataTransfer polyfill for drag and drop tests
+class DataTransferMock {
+  data: Record<string, string> = {};
+  effectAllowed = 'all';
+  dropEffect = 'none';
+  files: File[] = [];
+  items: DataTransferItemList = [] as unknown as DataTransferItemList;
+  types: string[] = [];
+
+  clearData(format?: string): void {
+    if (format) {
+      delete this.data[format];
+    } else {
+      this.data = {};
+    }
+  }
+
+  getData(format: string): string {
+    return this.data[format] || '';
+  }
+
+  setData(format: string, data: string): void {
+    this.data[format] = data;
+  }
+
+  setDragImage(): void {
+    // No-op
+  }
+}
+
+global.DataTransfer = DataTransferMock as unknown as typeof DataTransfer;
+
 beforeAll(() => {
   server.listen();
   vi.useFakeTimers({ shouldAdvanceTime: true });

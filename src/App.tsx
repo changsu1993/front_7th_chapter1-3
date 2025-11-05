@@ -164,6 +164,7 @@ function App() {
   const [pendingRecurringDelete, setPendingRecurringDelete] = useState<Event | null>(null);
   const [recurringEditMode, setRecurringEditMode] = useState<boolean | null>(null); // true = single, false = all
   const [recurringDialogMode, setRecurringDialogMode] = useState<'edit' | 'delete'>('edit');
+  const [draggedEvent, setDraggedEvent] = useState<Event | null>(null);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -299,6 +300,46 @@ function App() {
     setDate(formattedDate);
   };
 
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, event: Event) => {
+    setDraggedEvent(event);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLTableCellElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLTableCellElement>, targetDate: string) => {
+    e.preventDefault();
+
+    if (!draggedEvent || draggedEvent.date === targetDate) {
+      setDraggedEvent(null);
+      return;
+    }
+
+    const updatedEvent = {
+      ...draggedEvent,
+      date: targetDate,
+    };
+
+    const overlapping = findOverlappingEvents(updatedEvent, events);
+    if (overlapping.length > 0) {
+      setOverlappingEvents(overlapping);
+      setIsOverlapDialogOpen(true);
+      setDraggedEvent(updatedEvent);
+      return;
+    }
+
+    try {
+      await saveEvent(updatedEvent);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setDraggedEvent(null);
+    }
+  };
+
   const renderWeekView = () => {
     const weekDates = getWeekDates(currentDate);
     return (
@@ -322,6 +363,8 @@ function App() {
                     key={date.toISOString()}
                     data-testid={`week-cell-${date.toISOString().split('T')[0]}`}
                     onClick={() => handleCellClick(date)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, date.toISOString().split('T')[0])}
                     sx={{
                       height: '120px',
                       verticalAlign: 'top',
@@ -349,9 +392,13 @@ function App() {
                         return (
                           <Box
                             key={event.id}
+                            data-testid={`event-box-${event.id}`}
+                            draggable={event.repeat.type === 'none'}
+                            onDragStart={(e) => handleDragStart(e, event)}
                             sx={{
                               ...eventBoxStyles.common,
                               ...(isNotified ? eventBoxStyles.notified : eventBoxStyles.normal),
+                              cursor: event.repeat.type === 'none' ? 'move' : 'default',
                             }}
                           >
                             <Stack direction="row" spacing={1} alignItems="center">
@@ -422,6 +469,8 @@ function App() {
                           cellDate ? `month-cell-${cellDate.toISOString().split('T')[0]}` : undefined
                         }
                         onClick={() => cellDate && handleCellClick(cellDate)}
+                        onDragOver={cellDate ? handleDragOver : undefined}
+                        onDrop={cellDate ? (e) => handleDrop(e, cellDate.toISOString().split('T')[0]) : undefined}
                         sx={{
                           height: '120px',
                           verticalAlign: 'top',
@@ -455,6 +504,9 @@ function App() {
                               return (
                                 <Box
                                   key={event.id}
+                                  data-testid={`event-box-${event.id}`}
+                                  draggable={event.repeat.type === 'none'}
+                                  onDragStart={(e) => handleDragStart(e, event)}
                                   sx={{
                                     p: 0.5,
                                     my: 0.5,
@@ -465,6 +517,7 @@ function App() {
                                     minHeight: '18px',
                                     width: '100%',
                                     overflow: 'hidden',
+                                    cursor: event.repeat.type === 'none' ? 'move' : 'default',
                                   }}
                                 >
                                   <Stack direction="row" spacing={1} alignItems="center">
@@ -813,7 +866,17 @@ function App() {
         </Stack>
       </Stack>
 
-      <Dialog open={isOverlapDialogOpen} onClose={() => setIsOverlapDialogOpen(false)}>
+      <Dialog
+        open={isOverlapDialogOpen}
+        onClose={() => {
+          setIsOverlapDialogOpen(false);
+          setDraggedEvent(null);
+        }}
+        TransitionProps={{
+          unmountOnExit: true,
+          timeout: 0,
+        }}
+      >
         <DialogTitle>일정 겹침 경고</DialogTitle>
         <DialogContent>
           <DialogContentText>다음 일정과 겹칩니다:</DialogContentText>
@@ -825,30 +888,47 @@ function App() {
           <DialogContentText>계속 진행하시겠습니까?</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIsOverlapDialogOpen(false)}>취소</Button>
+          <Button onClick={() => {
+            setIsOverlapDialogOpen(false);
+            setDraggedEvent(null);
+          }}>
+            취소
+          </Button>
           <Button
             color="error"
-            onClick={() => {
+            onClick={async () => {
               setIsOverlapDialogOpen(false);
-              saveEvent({
-                id: editingEvent ? editingEvent.id : undefined,
-                title,
-                date,
-                startTime,
-                endTime,
-                description,
-                location,
-                category,
-                repeat: {
-                  type: isRepeating ? repeatType : 'none',
-                  interval: repeatInterval,
-                  endDate: repeatEndDate || undefined,
-                },
-                notificationTime,
-              });
+
+              if (draggedEvent) {
+                try {
+                  await saveEvent(draggedEvent);
+                } catch (error) {
+                  console.error(error);
+                } finally {
+                  setDraggedEvent(null);
+                }
+              } else {
+                await saveEvent({
+                  id: editingEvent ? editingEvent.id : undefined,
+                  title,
+                  date,
+                  startTime,
+                  endTime,
+                  description,
+                  location,
+                  category,
+                  repeat: {
+                    type: isRepeating ? repeatType : 'none',
+                    interval: repeatInterval,
+                    endDate: repeatEndDate || undefined,
+                  },
+                  notificationTime,
+                });
+                resetForm();
+              }
             }}
           >
-            계속 진행
+            계속
           </Button>
         </DialogActions>
       </Dialog>
