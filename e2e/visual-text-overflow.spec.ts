@@ -26,7 +26,8 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     /**
      * 목적: 캘린더 셀에서 긴 제목이 잘리거나 줄바꿈되는지 확인
      */
-    const longTitle = '이것은 매우 매우 매우 긴 일정 제목입니다 텍스트가 너무 길어서 한 줄에 다 들어가지 않을 수 있습니다';
+    const longTitle =
+      '이것은 매우 매우 매우 긴 일정 제목입니다 텍스트가 너무 길어서 한 줄에 다 들어가지 않을 수 있습니다';
 
     await page.getByLabel('제목').fill(longTitle);
     await page.getByLabel('날짜').fill('2025-10-15');
@@ -90,7 +91,8 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     /**
      * 목적: 위치 필드의 긴 텍스트 처리
      */
-    const longLocation = '서울특별시 강남구 테헤란로 123번길 45-67 OO빌딩 8층 회의실 A호실 옆 복도 끝 왼쪽';
+    const longLocation =
+      '서울특별시 강남구 테헤란로 123번길 45-67 OO빌딩 8층 회의실 A호실 옆 복도 끝 왼쪽';
 
     await page.getByLabel('제목').fill('긴 위치 테스트');
     await page.getByLabel('날짜').fill('2025-11-17');
@@ -164,7 +166,8 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     /**
      * 목적: 특수문자와 이모지가 섞인 긴 텍스트 처리
      */
-    const titleWithSpecialChars = '회의 📅 (긴급) 🔥 @참석자들 #프로젝트A & 프로젝트B 관련 논의 사항 100% 중요!!!';
+    const titleWithSpecialChars =
+      '회의 📅 (긴급) 🔥 @참석자들 #프로젝트A & 프로젝트B 관련 논의 사항 100% 중요!!!';
 
     await page.getByLabel('제목').fill(titleWithSpecialChars);
     await page.getByLabel('날짜').fill('2025-11-18');
@@ -206,7 +209,8 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     /**
      * 목적: 숫자와 기호가 많을 때 텍스트 처리
      */
-    const numericTitle = '2025-11-20 14:00~15:00 회의 (Room#123) - Project-456 ver.7.8.9 @location_A';
+    const numericTitle =
+      '2025-11-20 14:00~15:00 회의 (Room#123) - Project-456 ver.7.8.9 @location_A';
 
     await page.getByLabel('제목').fill(numericTitle);
     await page.getByLabel('날짜').fill('2025-11-20');
@@ -254,7 +258,8 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     /**
      * 목적: 검색 시 긴 텍스트에서 검색어가 하이라이트되는지 확인
      */
-    const longTitle = '이것은 매우 긴 제목입니다 중간에 검색어가 포함되어 있으며 텍스트가 매우 길어서 오버플로우가 발생할 수 있습니다';
+    const longTitle =
+      '이것은 매우 긴 제목입니다 중간에 검색어가 포함되어 있으며 텍스트가 매우 길어서 오버플로우가 발생할 수 있습니다';
 
     await page.getByLabel('제목').fill(longTitle);
     await page.getByLabel('날짜').fill('2025-11-21');

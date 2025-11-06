@@ -36,7 +36,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import RecurringEventDialog from './components/RecurringEventDialog.tsx';
 import { useCalendarView } from './hooks/useCalendarView.ts';
@@ -179,10 +179,7 @@ function App() {
     e.dataTransfer.dropEffect = 'move';
   };
 
-  const handleDrop = async (
-    e: React.DragEvent<HTMLTableCellElement>,
-    targetDate: string
-  ) => {
+  const handleDrop = async (e: React.DragEvent<HTMLTableCellElement>, targetDate: string) => {
     e.preventDefault();
 
     if (!draggedEvent || draggedEvent.date === targetDate) {
@@ -473,11 +470,17 @@ function App() {
                       <TableCell
                         key={dayIndex}
                         data-testid={
-                          cellDate ? `month-cell-${cellDate.toISOString().split('T')[0]}` : undefined
+                          cellDate
+                            ? `month-cell-${cellDate.toISOString().split('T')[0]}`
+                            : undefined
                         }
                         onClick={() => cellDate && handleCellClick(cellDate)}
                         onDragOver={cellDate ? handleDragOver : undefined}
-                        onDrop={cellDate ? (e) => handleDrop(e, cellDate.toISOString().split('T')[0]) : undefined}
+                        onDrop={
+                          cellDate
+                            ? (e) => handleDrop(e, cellDate.toISOString().split('T')[0])
+                            : undefined
+                        }
                         sx={{
                           height: '120px',
                           verticalAlign: 'top',
@@ -895,10 +898,12 @@ function App() {
           <DialogContentText>계속 진행하시겠습니까?</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => {
-            setIsOverlapDialogOpen(false);
-            setDraggedEvent(null);
-          }}>
+          <Button
+            onClick={() => {
+              setIsOverlapDialogOpen(false);
+              setDraggedEvent(null);
+            }}
+          >
             취소
           </Button>
           <Button

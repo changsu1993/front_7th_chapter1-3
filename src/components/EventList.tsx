@@ -39,9 +39,9 @@ export interface EventListProps {
   events: Event[];
   notifiedEvents: string[];
   searchTerm: string;
-  onSearchChange: (value: string) => void;
-  onEditEvent: (event: Event) => void;
-  onDeleteEvent: (event: Event) => void;
+  onSearchChange: (_value: string) => void;
+  onEditEvent: (_event: Event) => void;
+  onDeleteEvent: (_event: Event) => void;
 }
 
 const EventList = ({

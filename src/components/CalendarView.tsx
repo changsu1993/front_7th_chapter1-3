@@ -11,6 +11,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
+import React from 'react';
 
 import { Event, RepeatType } from '../types';
 import {
@@ -66,10 +67,10 @@ export interface CalendarViewProps {
   events: Event[];
   notifiedEvents: string[];
   holidays?: Record<string, string>;
-  onCellClick?: (date: Date) => void;
-  onDragStart?: (e: React.DragEvent<HTMLDivElement>, event: Event) => void;
-  onDragOver?: (e: React.DragEvent<HTMLTableCellElement>) => void;
-  onDrop?: (e: React.DragEvent<HTMLTableCellElement>, targetDate: string) => void;
+  onCellClick?: (_date: Date) => void;
+  onDragStart?: (_e: React.DragEvent<HTMLDivElement>, _event: Event) => void;
+  onDragOver?: (_e: React.DragEvent<HTMLTableCellElement>) => void;
+  onDrop?: (_e: React.DragEvent<HTMLTableCellElement>, _targetDate: string) => void;
 }
 
 const CalendarView = ({
@@ -215,7 +216,9 @@ const CalendarView = ({
                       <TableCell
                         key={dayIndex}
                         data-testid={
-                          cellDate ? `month-cell-${cellDate.toISOString().split('T')[0]}` : undefined
+                          cellDate
+                            ? `month-cell-${cellDate.toISOString().split('T')[0]}`
+                            : undefined
                         }
                         onClick={() => cellDate && onCellClick && onCellClick(cellDate)}
                         onDragOver={cellDate ? onDragOver : undefined}

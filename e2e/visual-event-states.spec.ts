@@ -253,7 +253,10 @@ test.describe('Visual Regression: 일정 상태', () => {
 
     // 일정 리스트에서 삭제 버튼에 호버
     const eventList = page.getByTestId('event-list');
-    const deleteButton = eventList.locator('li').filter({ hasText: '호버 테스트 일정' }).getByRole('button', { name: '삭제' });
+    const deleteButton = eventList
+      .locator('li')
+      .filter({ hasText: '호버 테스트 일정' })
+      .getByRole('button', { name: '삭제' });
     await deleteButton.hover();
 
     // 호버 상태 스크린샷
