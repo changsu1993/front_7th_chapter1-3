@@ -321,9 +321,39 @@ describe('드래그 앤 드롭 이벤트 이동 기능', () => {
     });
   });
 
-  describe('반복 이벤트 처리 (추후 구현)', () => {
-    it.skip('반복 일정은 드래그할 수 없다', async () => {
-      // 추후 구현
+  describe('반복 이벤트 처리', () => {
+    it('반복 일정은 드래그할 수 없다', async () => {
+      setupMockHandlerUpdating([
+        {
+          id: '1',
+          title: '반복 일정',
+          date: '2025-10-01',
+          startTime: '14:00',
+          endTime: '15:00',
+          description: '매주 반복되는 일정',
+          location: '회의실',
+          category: '업무',
+          repeat: { type: 'weekly', interval: 1 },
+          notificationTime: 10,
+        },
+      ]);
+
+      setup(<App />);
+
+      await screen.findByText('일정 로딩 완료!');
+
+      // 월간 뷰에서 반복 일정을 드래그 시도
+      const eventBox = screen.getByTestId('event-box-1');
+      const targetCell = screen.getByTestId('month-cell-2025-10-05');
+
+      simulateDragAndDrop(eventBox, targetCell);
+
+      // 드래그 후에도 원래 날짜에 유지되어야 함 (변경되지 않아야 함)
+      await waitFor(() => {
+        const eventList = within(screen.getByTestId('event-list'));
+        expect(eventList.getByText('2025-10-01')).toBeInTheDocument();
+        expect(eventList.getByText('14:00 - 15:00')).toBeInTheDocument();
+      });
     });
   });
 });
