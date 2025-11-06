@@ -168,6 +168,53 @@ function App() {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, event: Event) => {
+    if (event.repeat.type !== 'none') return; // Don't allow dragging recurring events
+    setDraggedEvent(event);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLTableCellElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = async (
+    e: React.DragEvent<HTMLTableCellElement>,
+    targetDate: string
+  ) => {
+    e.preventDefault();
+
+    if (!draggedEvent || draggedEvent.date === targetDate) {
+      setDraggedEvent(null);
+      return;
+    }
+
+    const updatedEvent = {
+      ...draggedEvent,
+      date: targetDate,
+    };
+
+    // Check for overlaps
+    const overlapping = findOverlappingEvents(updatedEvent, events);
+    if (overlapping.length > 0) {
+      setOverlappingEvents(overlapping);
+      setIsOverlapDialogOpen(true);
+      setDraggedEvent(updatedEvent);
+      return;
+    }
+
+    try {
+      await saveEvent(updatedEvent);
+      enqueueSnackbar('일정이 이동되었습니다', { variant: 'success' });
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar('일정 이동 실패', { variant: 'error' });
+    } finally {
+      setDraggedEvent(null);
+    }
+  };
+
   const handleRecurringConfirm = async (editSingleOnly: boolean) => {
     if (recurringDialogMode === 'edit' && pendingRecurringEdit) {
       // 편집 모드 저장하고 편집 폼으로 이동
@@ -298,46 +345,6 @@ function App() {
     const day = String(date.getDate()).padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
     setDate(formattedDate);
-  };
-
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, event: Event) => {
-    setDraggedEvent(event);
-    e.dataTransfer.effectAllowed = 'move';
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLTableCellElement>) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
-
-  const handleDrop = async (e: React.DragEvent<HTMLTableCellElement>, targetDate: string) => {
-    e.preventDefault();
-
-    if (!draggedEvent || draggedEvent.date === targetDate) {
-      setDraggedEvent(null);
-      return;
-    }
-
-    const updatedEvent = {
-      ...draggedEvent,
-      date: targetDate,
-    };
-
-    const overlapping = findOverlappingEvents(updatedEvent, events);
-    if (overlapping.length > 0) {
-      setOverlappingEvents(overlapping);
-      setIsOverlapDialogOpen(true);
-      setDraggedEvent(updatedEvent);
-      return;
-    }
-
-    try {
-      await saveEvent(updatedEvent);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setDraggedEvent(null);
-    }
   };
 
   const renderWeekView = () => {
@@ -902,8 +909,10 @@ function App() {
               if (draggedEvent) {
                 try {
                   await saveEvent(draggedEvent);
+                  enqueueSnackbar('일정이 이동되었습니다', { variant: 'success' });
                 } catch (error) {
                   console.error(error);
+                  enqueueSnackbar('일정 이동 실패', { variant: 'error' });
                 } finally {
                   setDraggedEvent(null);
                 }
