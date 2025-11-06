@@ -1,0 +1,144 @@
+
+> assignment@0.0.0 test:e2e /Users/seednpc38/Documents/front_7th_chapter1-3
+> playwright test crud/create.spec.ts
+
+
+Running 8 tests using 4 workers
+
+  ✓  1 [chromium] › e2e/tests-refactored/crud/create.spec.ts:104:3 › CRUD: 일정 생성 (Create) › 필수 필드 검증 - 제목 없음 (11.2s)
+  ✓  4 [chromium] › e2e/tests-refactored/crud/create.spec.ts:25:3 › CRUD: 일정 생성 (Create) › 기본 일정 생성 (12.4s)
+  ✓  6 [chromium] › e2e/tests-refactored/crud/create.spec.ts:151:3 › CRUD: 일정 생성 (Create) › 특수문자를 포함한 일정 생성 (8.9s)
+  ✘  3 [chromium] › e2e/tests-refactored/crud/create.spec.ts:43:3 › CRUD: 일정 생성 (Create) › 상세 정보가 있는 일정 생성 (20.6s)
+  ✓  5 [chromium] › e2e/tests-refactored/crud/create.spec.ts:130:3 › CRUD: 일정 생성 (Create) › 시간 검증 - 시작 시간이 종료 시간보다 늦음 (12.3s)
+  ✓  8 [chromium] › e2e/tests-refactored/crud/create.spec.ts:188:3 › CRUD: 일정 생성 (Create) › API를 통한 일정 생성 (성능 테스트) (5.8s)
+  ✘  2 [chromium] › e2e/tests-refactored/crud/create.spec.ts:73:3 › CRUD: 일정 생성 (Create) › 여러 일정 연속 생성 (30.6s)
+  ✘  7 [chromium] › e2e/tests-refactored/crud/create.spec.ts:168:3 › CRUD: 일정 생성 (Create) › 긴 제목으로 일정 생성 (12.0s)
+
+
+  1) [chromium] › e2e/tests-refactored/crud/create.spec.ts:43:3 › CRUD: 일정 생성 (Create) › 상세 정보가 있는 일정 생성 
+
+    Error: 일정 "상세 정보 일정"을(를) 찾을 수 없습니다
+
+       at ../pages/EventListPage.ts:102
+
+      100 |       await this.getEventByTitle(title).waitFor({ timeout });
+      101 |     } catch {
+    > 102 |       throw new Error(`일정 "${title}"을(를) 찾을 수 없습니다`);
+          |             ^
+      103 |     }
+      104 |   }
+      105 |
+        at EventListPage.waitForEvent (/Users/seednpc38/Documents/front_7th_chapter1-3/e2e/pages/EventListPage.ts:102:13)
+        at /Users/seednpc38/Documents/front_7th_chapter1-3/e2e/tests-refactored/crud/create.spec.ts:63:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/crud-create-CRUD-일정-생성-Create-상세-정보가-있는-일정-생성-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/crud-create-CRUD-일정-생성-Create-상세-정보가-있는-일정-생성-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/crud-create-CRUD-일정-생성-Create-상세-정보가-있는-일정-생성-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/crud-create-CRUD-일정-생성-Create-상세-정보가-있는-일정-생성-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e/tests-refactored/crud/create.spec.ts:73:3 › CRUD: 일정 생성 (Create) › 여러 일정 연속 생성 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    TimeoutError: locator.click: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for getByLabel('카테고리')[22m
+    [2m    - locator resolved to <div aria-label="카테고리" aria-labelledby="category-label" class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-sizeSmall MuiSelect-root css-sc8y68-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root">…</div>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div tabindex="-1" role="presentation" class="MuiDialog-container MuiDialog-scrollPaper css-19do60a-MuiDialog-container">…</div> from <div role="presentation" class="MuiDialog-root MuiModal-root css-1424xw8-MuiModal-root-MuiDialog-root">…</div> subtree intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <div tabindex="-1" role="presentation" class="MuiDialog-container MuiDialog-scrollPaper css-19do60a-MuiDialog-container">…</div> from <div role="presentation" class="MuiDialog-root MuiModal-root css-1424xw8-MuiModal-root-MuiDialog-root">…</div> subtree intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    14 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <div tabindex="-1" role="presentation" class="MuiDialog-container MuiDialog-scrollPaper css-19do60a-MuiDialog-container">…</div> from <div role="presentation" class="MuiDialog-root MuiModal-root css-1424xw8-MuiModal-root-MuiDialog-root">…</div> subtree intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+       at ../pages/BasePage.ts:40
+
+      38 |    */
+      39 |   async selectDropdown(labelText: string, optionText: string): Promise<void> {
+    > 40 |     await this.page.getByLabel(labelText).click();
+         |                                           ^
+      41 |     await this.selectOption(optionText);
+      42 |   }
+      43 |
+        at EventFormPage.selectDropdown (/Users/seednpc38/Documents/front_7th_chapter1-3/e2e/pages/BasePage.ts:40:43)
+        at EventFormPage.selectCategory (/Users/seednpc38/Documents/front_7th_chapter1-3/e2e/pages/EventFormPage.ts:74:16)
+        at EventFormPage.fillEventForm (/Users/seednpc38/Documents/front_7th_chapter1-3/e2e/pages/EventFormPage.ts:132:18)
+        at /Users/seednpc38/Documents/front_7th_chapter1-3/e2e/tests-refactored/crud/create.spec.ts:86:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/crud-create-CRUD-일정-생성-Create-여러-일정-연속-생성-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/crud-create-CRUD-일정-생성-Create-여러-일정-연속-생성-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/crud-create-CRUD-일정-생성-Create-여러-일정-연속-생성-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/crud-create-CRUD-일정-생성-Create-여러-일정-연속-생성-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › e2e/tests-refactored/crud/create.spec.ts:168:3 › CRUD: 일정 생성 (Create) › 긴 제목으로 일정 생성 
+
+    Error: 일정 "이것은 매우 매우 매우 긴 일정 제목"을(를) 찾을 수 없습니다
+
+       at ../pages/EventListPage.ts:102
+
+      100 |       await this.getEventByTitle(title).waitFor({ timeout });
+      101 |     } catch {
+    > 102 |       throw new Error(`일정 "${title}"을(를) 찾을 수 없습니다`);
+          |             ^
+      103 |     }
+      104 |   }
+      105 |
+        at EventListPage.waitForEvent (/Users/seednpc38/Documents/front_7th_chapter1-3/e2e/pages/EventListPage.ts:102:13)
+        at /Users/seednpc38/Documents/front_7th_chapter1-3/e2e/tests-refactored/crud/create.spec.ts:180:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/crud-create-CRUD-일정-생성-Create-긴-제목으로-일정-생성-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/crud-create-CRUD-일정-생성-Create-긴-제목으로-일정-생성-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/crud-create-CRUD-일정-생성-Create-긴-제목으로-일정-생성-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/crud-create-CRUD-일정-생성-Create-긴-제목으로-일정-생성-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › e2e/tests-refactored/crud/create.spec.ts:43:3 › CRUD: 일정 생성 (Create) › 상세 정보가 있는 일정 생성 
+    [chromium] › e2e/tests-refactored/crud/create.spec.ts:73:3 › CRUD: 일정 생성 (Create) › 여러 일정 연속 생성 
+    [chromium] › e2e/tests-refactored/crud/create.spec.ts:168:3 › CRUD: 일정 생성 (Create) › 긴 제목으로 일정 생성 
+  5 passed (37.4s)
+
+[36m  Serving HTML report at http://localhost:61889. Press Ctrl+C to quit.[39m

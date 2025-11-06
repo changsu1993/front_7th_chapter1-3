@@ -36,7 +36,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import RecurringEventDialog from './components/RecurringEventDialog.tsx';
 import { useCalendarView } from './hooks/useCalendarView.ts';
@@ -167,6 +167,29 @@ function App() {
   const [draggedEvent, setDraggedEvent] = useState<Event | null>(null);
 
   const { enqueueSnackbar } = useSnackbar();
+
+  // Initialize Dialog states on component mount to prevent state leakage in E2E tests
+  useEffect(() => {
+    // Reset all Dialog states when app loads
+    const initializeDialogStates = () => {
+      setIsOverlapDialogOpen(false);
+      setOverlappingEvents([]);
+      setIsRecurringDialogOpen(false);
+      setPendingRecurringEdit(null);
+      setPendingRecurringDelete(null);
+      setRecurringEditMode(null);
+      setRecurringDialogMode('edit');
+      setDraggedEvent(null);
+    };
+
+    // Initialize on mount
+    initializeDialogStates();
+
+    // Expose reset function to window for E2E tests
+    if (typeof window !== 'undefined') {
+      (window as any).__resetDialogStates__ = initializeDialogStates;
+    }
+  }, []);
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, event: Event) => {
     if (event.repeat.type !== 'none') return; // Don't allow dragging recurring events
