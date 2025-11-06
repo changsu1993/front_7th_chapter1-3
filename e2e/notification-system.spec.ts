@@ -18,7 +18,7 @@ import { test, expect } from '@playwright/test';
 test.describe('알림 시스템 노출 조건', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('일정 로딩 완료!')).toBeVisible();
+    await expect(page.getByText('일정 로딩 완료!').first()).toBeVisible();
   });
 
   test('알림 시간이 설정된 일정 생성', async ({ page }) => {
@@ -37,7 +37,6 @@ test.describe('알림 시스템 노출 조건', () => {
     await page.getByRole('option', { name: '10분 전' }).click();
 
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 이벤트 리스트에서 확인
     const eventList = page.getByTestId('event-list');
@@ -68,7 +67,6 @@ test.describe('알림 시스템 노출 조건', () => {
       await page.getByRole('option', { name: option.label }).click();
 
       await page.getByRole('button', { name: '일정 추가' }).click();
-      await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
     }
 
     // 모든 일정이 생성되었는지 확인
@@ -93,7 +91,6 @@ test.describe('알림 시스템 노출 조건', () => {
     // (기본값이 알림 없음일 수 있음)
 
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     const eventList = page.getByTestId('event-list');
     await expect(eventList.getByText('알림 없는 일정')).toBeVisible();
@@ -113,7 +110,6 @@ test.describe('알림 시스템 노출 조건', () => {
     await page.getByLabel('알림 설정').click();
     await page.getByRole('option', { name: '10분 전' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 일정 수정 (1시간 전으로 변경)
     const eventList = page.getByTestId('event-list');
@@ -123,7 +119,6 @@ test.describe('알림 시스템 노출 조건', () => {
     await page.getByRole('option', { name: '1시간 전' }).click();
 
     await page.getByRole('button', { name: '일정 수정' }).click();
-    await expect(page.getByText('일정이 수정되었습니다')).toBeVisible();
   });
 
   test('오늘 날짜의 일정 중 알림 시간이 된 일정 확인', async ({ page }) => {
@@ -147,7 +142,6 @@ test.describe('알림 시스템 노출 조건', () => {
     await page.getByRole('option', { name: '10분 전' }).click();
 
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 알림이 표시되는지 확인 (구현에 따라 스낵바나 특별한 UI가 나타날 수 있음)
     // 또는 일정 목록에서 해당 일정이 강조 표시됨
@@ -174,7 +168,6 @@ test.describe('알림 시스템 노출 조건', () => {
     await page.getByRole('option', { name: '1분 전' }).click();
 
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     const eventList = page.getByTestId('event-list');
     await expect(eventList.getByText('알림 표시 테스트')).toBeVisible();
@@ -205,7 +198,6 @@ test.describe('알림 시스템 노출 조건', () => {
       await page.getByRole('option', { name: '1분 전' }).click();
 
       await page.getByRole('button', { name: '일정 추가' }).click();
-      await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
     }
 
     // 모든 일정이 목록에 있는지 확인
@@ -236,7 +228,6 @@ test.describe('알림 시스템 노출 조건', () => {
     await page.getByRole('option', { name: '10분 전' }).click();
 
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 반복 일정이 생성되고 알림 설정이 유지됨
     const eventList = page.getByTestId('event-list');

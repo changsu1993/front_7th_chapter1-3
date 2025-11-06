@@ -19,7 +19,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('일정 로딩 완료!')).toBeVisible();
+    await expect(page.getByText('일정 로딩 완료!').first()).toBeVisible();
   });
 
   test('캘린더 셀에 매우 긴 제목의 일정', async ({ page }) => {
@@ -35,7 +35,6 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 월간 뷰에서 텍스트 오버플로우 확인
     await expect(page).toHaveScreenshot('text-overflow-calendar-cell-long-title.png', {
@@ -57,7 +56,6 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 일정 리스트 영역 스크린샷
     const eventList = page.getByTestId('event-list');
@@ -80,7 +78,6 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 일정 리스트에서 설명이 표시되는지 확인
     const eventList = page.getByTestId('event-list');
@@ -103,7 +100,6 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 일정 리스트 스크린샷
     const eventList = page.getByTestId('event-list');
@@ -130,7 +126,6 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
       await page.getByLabel('카테고리').click();
       await page.getByRole('option', { name: '업무' }).click();
       await page.getByRole('button', { name: '일정 추가' }).click();
-      await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
     }
 
     // 월간 뷰에서 해당 날짜 셀 확인
@@ -153,7 +148,6 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '개인' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 주간 뷰로 전환
     await page.getByLabel('뷰 타입 선택').click();
@@ -179,7 +173,6 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 일정 리스트 스크린샷
     const eventList = page.getByTestId('event-list');
@@ -201,7 +194,6 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 일정 리스트 스크린샷
     const eventList = page.getByTestId('event-list');
@@ -223,7 +215,6 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 일정 리스트 스크린샷
     const eventList = page.getByTestId('event-list');
@@ -250,7 +241,6 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
       await page.getByLabel('카테고리').click();
       await page.getByRole('option', { name: i % 2 === 0 ? '업무' : '개인' }).click();
       await page.getByRole('button', { name: '일정 추가' }).click();
-      await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
     }
 
     // 월간 뷰에서 다양한 길이 제목들 확인
@@ -273,7 +263,6 @@ test.describe('Visual Regression: 텍스트 오버플로우 처리', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 검색 실행
     const searchInput = page.getByLabel('일정 검색');

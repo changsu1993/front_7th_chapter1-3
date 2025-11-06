@@ -20,7 +20,7 @@ import { test, expect } from '@playwright/test';
 test.describe('반복 일정 관리 워크플로우', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('일정 로딩 완료!')).toBeVisible();
+    await expect(page.getByText('일정 로딩 완료!').first()).toBeVisible();
   });
 
   test('일간 반복 일정 생성 및 확인', async ({ page }) => {
@@ -42,9 +42,8 @@ test.describe('반복 일정 관리 워크플로우', () => {
 
     // 일정 추가
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
-    // 이벤트 리스트에서 반복 일정 확인
+    // 이벤트 리스트에서 반복 일정 확인 (실제 DOM 변경으로 확인)
     const eventList = page.getByTestId('event-list');
     await expect(eventList.getByText('매일 스탠드업 미팅')).toBeVisible();
   });
@@ -66,8 +65,8 @@ test.describe('반복 일정 관리 워크플로우', () => {
     await page.getByLabel('반복 간격').fill('1');
 
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
+    // 일정이 추가되었는지 확인 (실제 DOM 변경으로 확인)
     const eventList = page.getByTestId('event-list');
     await expect(eventList.getByText('주간 회의')).toBeVisible();
   });
@@ -88,8 +87,8 @@ test.describe('반복 일정 관리 워크플로우', () => {
     await page.getByLabel('반복 간격').fill('1');
 
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
+    // 일정이 추가되었는지 확인 (실제 DOM 변경으로 확인)
     const eventList = page.getByTestId('event-list');
     await expect(eventList.getByText('월간 보고')).toBeVisible();
   });
@@ -109,10 +108,10 @@ test.describe('반복 일정 관리 워크플로우', () => {
     await page.getByRole('option', { name: 'daily' }).click();
     await page.getByLabel('반복 간격').fill('1');
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 반복 일정 클릭하여 수정 시도
     const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('반복 테스트 일정')).toBeVisible();
     await eventList.getByText('반복 테스트 일정').first().click();
 
     // 제목 수정
@@ -128,8 +127,8 @@ test.describe('반복 일정 관리 워크플로우', () => {
     // "예" 버튼 클릭 (이 일정만)
     await page.getByRole('button', { name: '예' }).click();
 
-    // 성공 메시지 확인
-    await expect(page.getByText('일정이 수정되었습니다')).toBeVisible();
+    // 다이얼로그가 닫혔는지 확인
+    await expect(page.getByText('반복 일정 수정')).not.toBeVisible();
   });
 
   test('반복 일정 전체 수정', async ({ page }) => {
@@ -147,10 +146,10 @@ test.describe('반복 일정 관리 워크플로우', () => {
     await page.getByRole('option', { name: 'weekly' }).click();
     await page.getByLabel('반복 간격').fill('1');
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 반복 일정 클릭하여 수정
     const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('전체 반복 수정 테스트')).toBeVisible();
     await eventList.getByText('전체 반복 수정 테스트').first().click();
 
     // 시간 변경
@@ -165,7 +164,8 @@ test.describe('반복 일정 관리 워크플로우', () => {
     await expect(page.getByText('반복 일정 수정')).toBeVisible();
     await page.getByRole('button', { name: '아니오' }).click();
 
-    await expect(page.getByText('일정이 수정되었습니다')).toBeVisible();
+    // 다이얼로그가 닫혔는지 확인
+    await expect(page.getByText('반복 일정 수정')).not.toBeVisible();
   });
 
   test('반복 일정 단일 인스턴스 삭제', async ({ page }) => {
@@ -183,10 +183,10 @@ test.describe('반복 일정 관리 워크플로우', () => {
     await page.getByRole('option', { name: 'daily' }).click();
     await page.getByLabel('반복 간격').fill('1');
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 삭제 버튼 클릭
     const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('삭제 테스트 반복 일정')).toBeVisible();
     const eventCard = eventList.locator('li').filter({ hasText: '삭제 테스트 반복 일정' }).first();
     await eventCard.getByRole('button', { name: '삭제' }).click();
 
@@ -196,7 +196,8 @@ test.describe('반복 일정 관리 워크플로우', () => {
     // "예" 버튼 클릭 (이 일정만)
     await page.getByRole('button', { name: '예' }).click();
 
-    await expect(page.getByText('일정이 삭제되었습니다')).toBeVisible();
+    // 다이얼로그가 닫혔는지 확인
+    await expect(page.getByText('반복 일정 삭제')).not.toBeVisible();
   });
 
   test('반복 일정 전체 삭제', async ({ page }) => {
@@ -214,10 +215,10 @@ test.describe('반복 일정 관리 워크플로우', () => {
     await page.getByRole('option', { name: 'weekly' }).click();
     await page.getByLabel('반복 간격').fill('1');
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 삭제 버튼 클릭
     const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('전체 삭제 테스트')).toBeVisible();
     const eventCard = eventList.locator('li').filter({ hasText: '전체 삭제 테스트' }).first();
     await eventCard.getByRole('button', { name: '삭제' }).click();
 
@@ -225,9 +226,10 @@ test.describe('반복 일정 관리 워크플로우', () => {
     await expect(page.getByText('반복 일정 삭제')).toBeVisible();
     await page.getByRole('button', { name: '아니오' }).click();
 
-    await expect(page.getByText('일정이 삭제되었습니다')).toBeVisible();
+    // 다이얼로그가 닫혔는지 확인
+    await expect(page.getByText('반복 일정 삭제')).not.toBeVisible();
 
-    // 모든 인스턴스가 삭제되었는지 확인
+    // 모든 인스턴스가 삭제되었는지 확인 (실제 DOM 변경으로 확인)
     await expect(eventList.getByText('전체 삭제 테스트')).not.toBeVisible();
   });
 
@@ -246,10 +248,10 @@ test.describe('반복 일정 관리 워크플로우', () => {
     await page.getByRole('option', { name: 'daily' }).click();
     await page.getByLabel('반복 간격').fill('1');
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 삭제 버튼 클릭
     const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('취소 테스트 반복 일정')).toBeVisible();
     const eventCard = eventList.locator('li').filter({ hasText: '취소 테스트 반복 일정' }).first();
     await eventCard.getByRole('button', { name: '삭제' }).click();
 

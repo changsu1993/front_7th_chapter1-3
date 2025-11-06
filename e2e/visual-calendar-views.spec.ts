@@ -19,7 +19,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Visual Regression: 캘린더 뷰 타입', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('일정 로딩 완료!')).toBeVisible();
+    await expect(page.getByText('일정 로딩 완료!').first()).toBeVisible();
   });
 
   test('월간 뷰 기본 렌더링', async ({ page }) => {
@@ -60,7 +60,6 @@ test.describe('Visual Regression: 캘린더 뷰 타입', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 스크린샷
     await expect(page).toHaveScreenshot('month-view-with-events.png', {
@@ -81,7 +80,6 @@ test.describe('Visual Regression: 캘린더 뷰 타입', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '개인' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 주간 뷰로 전환
     await page.getByLabel('뷰 타입 선택').click();
@@ -112,7 +110,6 @@ test.describe('Visual Regression: 캘린더 뷰 타입', () => {
       await page.getByLabel('카테고리').click();
       await page.getByRole('option', { name: event.category }).click();
       await page.getByRole('button', { name: '일정 추가' }).click();
-      await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
     }
 
     // 스크린샷

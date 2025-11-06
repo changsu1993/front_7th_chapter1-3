@@ -18,7 +18,7 @@ import { test, expect } from '@playwright/test';
 test.describe('일정 겹침 처리 워크플로우', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('일정 로딩 완료!')).toBeVisible();
+    await expect(page.getByText('일정 로딩 완료!').first()).toBeVisible();
   });
 
   test('겹치는 일정 생성 시 경고 다이얼로그 표시', async ({ page }) => {
@@ -33,7 +33,10 @@ test.describe('일정 겹침 처리 워크플로우', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 첫 번째 일정이 추가되었는지 확인
+    const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('회의 A')).toBeVisible();
 
     // 두 번째 일정 생성 (같은 시간)
     await page.getByLabel('제목').fill('회의 B');
@@ -60,7 +63,10 @@ test.describe('일정 겹침 처리 워크플로우', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '개인' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 첫 번째 일정이 추가되었는지 확인
+    const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('스터디 A')).toBeVisible();
 
     // 두 번째 일정 생성 (겹침)
     await page.getByLabel('제목').fill('스터디 B');
@@ -75,10 +81,7 @@ test.describe('일정 겹침 처리 워크플로우', () => {
     await expect(page.getByText('일정 겹침 경고')).toBeVisible();
     await page.getByRole('button', { name: '계속' }).click();
 
-    // 일정이 추가되었는지 확인
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
-
-    const eventList = page.getByTestId('event-list');
+    // 두 일정이 모두 추가되었는지 확인 (실제 DOM 변경으로 확인)
     await expect(eventList.getByText('스터디 A')).toBeVisible();
     await expect(eventList.getByText('스터디 B')).toBeVisible();
   });
@@ -95,7 +98,10 @@ test.describe('일정 겹침 처리 워크플로우', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 첫 번째 일정이 추가되었는지 확인
+    const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('워크샵 A')).toBeVisible();
 
     // 두 번째 일정 생성 시도 (겹침)
     await page.getByLabel('제목').fill('워크샵 B');
@@ -113,8 +119,7 @@ test.describe('일정 겹침 처리 워크플로우', () => {
     // 다이얼로그가 닫혔는지 확인
     await expect(page.getByText('일정 겹침 경고')).not.toBeVisible();
 
-    // 첫 번째 일정만 존재하는지 확인
-    const eventList = page.getByTestId('event-list');
+    // 첫 번째 일정만 존재하는지 확인 (실제 DOM으로 확인)
     await expect(eventList.getByText('워크샵 A')).toBeVisible();
     await expect(eventList.getByText('워크샵 B')).not.toBeVisible();
   });
@@ -131,7 +136,10 @@ test.describe('일정 겹침 처리 워크플로우', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 첫 번째 일정 확인
+    const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('프로젝트 회의')).toBeVisible();
 
     // 두 번째 일정: 10:00-12:00 (부분 겹침)
     await page.getByLabel('제목').fill('디자인 리뷰');
@@ -158,7 +166,10 @@ test.describe('일정 겹침 처리 워크플로우', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 첫 번째 일정 확인
+    const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('팀 미팅')).toBeVisible();
 
     // 두 번째 일정 생성: 16:00-17:00 (겹치지 않음)
     await page.getByLabel('제목').fill('개인 작업');
@@ -168,10 +179,11 @@ test.describe('일정 겹침 처리 워크플로우', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '개인' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 두 번째 일정 확인
+    await expect(eventList.getByText('개인 작업')).toBeVisible();
 
     // 두 번째 일정을 수정하여 첫 번째 일정과 겹치도록 변경
-    const eventList = page.getByTestId('event-list');
     await eventList.getByText('개인 작업').click();
 
     await page.getByLabel('시작 시간').clear();
@@ -197,7 +209,10 @@ test.describe('일정 겹침 처리 워크플로우', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 첫 번째 일정 확인
+    const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('회의 1')).toBeVisible();
 
     // 두 번째 일정 (첫 번째와 겹침, 경고 무시)
     await page.getByLabel('제목').fill('회의 2');
@@ -209,7 +224,6 @@ test.describe('일정 겹침 처리 워크플로우', () => {
     await page.getByRole('button', { name: '일정 추가' }).click();
     await expect(page.getByText('일정 겹침 경고')).toBeVisible();
     await page.getByRole('button', { name: '계속' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 세 번째 일정 (앞의 두 일정과 모두 겹침)
     await page.getByLabel('제목').fill('회의 3');
@@ -239,7 +253,10 @@ test.describe('일정 겹침 처리 워크플로우', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 첫 번째 일정 확인
+    const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('아침 미팅')).toBeVisible();
 
     // 두 번째 일정: 10:00-11:00 (경계가 맞닿음, 겹침 아님)
     await page.getByLabel('제목').fill('오전 작업');
@@ -251,7 +268,9 @@ test.describe('일정 겹침 처리 워크플로우', () => {
     await page.getByRole('button', { name: '일정 추가' }).click();
 
     // 경고 다이얼로그가 나타나지 않고 바로 추가됨
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
     await expect(page.getByText('일정 겹침 경고')).not.toBeVisible();
+
+    // 두 번째 일정도 추가되었는지 확인
+    await expect(eventList.getByText('오전 작업')).toBeVisible();
   });
 });

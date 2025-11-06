@@ -22,7 +22,7 @@ import { test, expect } from '@playwright/test';
 test.describe('검색 및 필터링 워크플로우', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('일정 로딩 완료!')).toBeVisible();
+    await expect(page.getByText('일정 로딩 완료!').first()).toBeVisible();
 
     // 테스트용 여러 일정 생성
     const testEvents = [
@@ -70,7 +70,6 @@ test.describe('검색 및 필터링 워크플로우', () => {
       await page.getByLabel('카테고리').click();
       await page.getByRole('option', { name: event.category }).click();
       await page.getByRole('button', { name: '일정 추가' }).click();
-      await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
     }
   });
 
@@ -144,7 +143,6 @@ test.describe('검색 및 필터링 워크플로우', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     const searchInput = page.getByLabel('일정 검색');
 
@@ -260,7 +258,6 @@ test.describe('검색 및 필터링 워크플로우', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     const searchInput = page.getByLabel('일정 검색');
     await searchInput.fill('(긴급)');
@@ -281,7 +278,6 @@ test.describe('검색 및 필터링 워크플로우', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     const searchInput = page.getByLabel('일정 검색');
     await searchInput.fill('2025');

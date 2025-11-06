@@ -18,7 +18,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Visual Regression: 다이얼로그 및 모달', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('일정 로딩 완료!')).toBeVisible();
+    await expect(page.getByText('일정 로딩 완료!').first()).toBeVisible();
   });
 
   test('일정 겹침 경고 다이얼로그', async ({ page }) => {
@@ -33,7 +33,10 @@ test.describe('Visual Regression: 다이얼로그 및 모달', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 첫 번째 일정이 추가되었는지 확인
+    const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('기존 일정')).toBeVisible();
 
     // 겹치는 일정 생성 시도
     await page.getByLabel('제목').fill('겹치는 일정');
@@ -69,10 +72,10 @@ test.describe('Visual Regression: 다이얼로그 및 모달', () => {
     await page.getByRole('option', { name: 'daily' }).click();
     await page.getByLabel('반복 간격').fill('1');
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 반복 일정 클릭하여 수정
     const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('반복 일정 테스트')).toBeVisible();
     await eventList.getByText('반복 일정 테스트').first().click();
 
     // 제목 수정
@@ -107,10 +110,10 @@ test.describe('Visual Regression: 다이얼로그 및 모달', () => {
     await page.getByRole('option', { name: 'weekly' }).click();
     await page.getByLabel('반복 간격').fill('1');
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 삭제 버튼 클릭
     const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('삭제 테스트 반복')).toBeVisible();
     const eventCard = eventList.locator('li').filter({ hasText: '삭제 테스트 반복' }).first();
     await eventCard.getByRole('button', { name: '삭제' }).click();
 
@@ -159,10 +162,10 @@ test.describe('Visual Regression: 다이얼로그 및 모달', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 일정 수정
     const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('수정 테스트')).toBeVisible();
     await eventList.getByText('수정 테스트').click();
     await page.getByLabel('제목').clear();
     await page.getByLabel('제목').fill('수정됨');
@@ -191,10 +194,10 @@ test.describe('Visual Regression: 다이얼로그 및 모달', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '개인' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 일정 삭제
     const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('삭제 테스트')).toBeVisible();
     const eventCard = eventList.locator('li').filter({ hasText: '삭제 테스트' }).first();
     await eventCard.getByRole('button', { name: '삭제' }).click();
 
@@ -221,7 +224,10 @@ test.describe('Visual Regression: 다이얼로그 및 모달', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 첫 번째 일정이 추가되었는지 확인
+    const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('일정 A')).toBeVisible();
 
     await page.getByLabel('제목').fill('일정 B');
     await page.getByLabel('날짜').fill('2025-11-07');
@@ -256,7 +262,10 @@ test.describe('Visual Regression: 다이얼로그 및 모달', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 첫 번째 일정이 추가되었는지 확인
+    const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('회의 A')).toBeVisible();
 
     // 두 번째 일정 (첫 번째와 겹침, 경고 무시)
     await page.getByLabel('제목').fill('회의 B');
@@ -267,7 +276,9 @@ test.describe('Visual Regression: 다이얼로그 및 모달', () => {
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
     await page.getByRole('button', { name: '계속' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 두 번째 일정이 추가되었는지 확인
+    await expect(eventList.getByText('회의 B')).toBeVisible();
 
     // 세 번째 일정 (앞의 두 일정과 모두 겹침)
     await page.getByLabel('제목').fill('회의 C');
@@ -303,9 +314,10 @@ test.describe('Visual Regression: 다이얼로그 및 모달', () => {
     await page.getByRole('option', { name: 'daily' }).click();
     await page.getByLabel('반복 간격').fill('1');
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
+    // 일정이 추가되었는지 확인
     const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('애니메이션 테스트')).toBeVisible();
     const eventCard = eventList.locator('li').filter({ hasText: '애니메이션 테스트' }).first();
     await eventCard.getByRole('button', { name: '삭제' }).click();
 

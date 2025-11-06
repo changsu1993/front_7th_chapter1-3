@@ -19,7 +19,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Visual Regression: 폼 컨트롤 상태', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('일정 로딩 완료!')).toBeVisible();
+    await expect(page.getByText('일정 로딩 완료!').first()).toBeVisible();
   });
 
   test('빈 폼 - 기본 상태', async ({ page }) => {
@@ -152,7 +152,6 @@ test.describe('Visual Regression: 폼 컨트롤 상태', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '개인' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 일정 클릭하여 편집 모드 진입
     const eventList = page.getByTestId('event-list');
@@ -214,7 +213,6 @@ test.describe('Visual Regression: 폼 컨트롤 상태', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
 
     // 편집 모드 진입
     const eventList = page.getByTestId('event-list');

@@ -36,7 +36,7 @@ export default defineConfig({
 
   // 웹서버 설정: 테스트 실행 전에 dev 서버 자동 실행
   webServer: {
-    command: 'pnpm dev',
+    command: 'TEST_ENV=e2e pnpm dev',
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

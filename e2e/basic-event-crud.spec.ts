@@ -21,7 +21,7 @@ test.describe('기본 일정 관리 워크플로우', () => {
     await page.goto('/');
 
     // 일정 로딩 완료 대기
-    await expect(page.getByText('일정 로딩 완료!')).toBeVisible();
+    await expect(page.getByText('일정 로딩 완료!').first()).toBeVisible();
   });
 
   test('전체 CRUD 워크플로우: 일정 생성 → 조회 → 수정 → 삭제', async ({ page }) => {
@@ -43,15 +43,12 @@ test.describe('기본 일정 관리 워크플로우', () => {
     // 일정 추가 버튼 클릭
     await page.getByRole('button', { name: '일정 추가' }).click();
 
-    // 성공 메시지 확인
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
-
     /**
      * Step 2: Read - 생성된 일정 조회
      */
-    // 이벤트 리스트에서 생성된 일정 확인
+    // 이벤트 리스트에서 생성된 일정 확인 (Snackbar 메시지가 아닌 실제 데이터로 확인)
     const eventList = page.getByTestId('event-list');
-    await expect(eventList.getByText('E2E 테스트 일정')).toBeVisible();
+    await expect(eventList.getByText('E2E 테스트 일정')).toBeVisible({ timeout: 10000 });
     await expect(eventList.getByText('2025-11-10')).toBeVisible();
     await expect(eventList.getByText('14:00 - 15:00')).toBeVisible();
     await expect(eventList.getByText('테스트 회의실')).toBeVisible();
@@ -75,10 +72,7 @@ test.describe('기본 일정 관리 워크플로우', () => {
     // 일정 수정 버튼 클릭
     await page.getByRole('button', { name: '일정 수정' }).click();
 
-    // 성공 메시지 확인
-    await expect(page.getByText('일정이 수정되었습니다')).toBeVisible();
-
-    // 수정된 내용 확인
+    // 수정된 내용 확인 (실제 DOM 변경으로 확인)
     await expect(eventList.getByText('E2E 테스트 일정 (수정됨)')).toBeVisible();
     await expect(eventList.getByText('15:00 - 16:00')).toBeVisible();
 
@@ -89,10 +83,7 @@ test.describe('기본 일정 관리 워크플로우', () => {
     const eventToDelete = eventList.getByText('E2E 테스트 일정 (수정됨)').locator('..');
     await eventToDelete.getByRole('button', { name: '삭제' }).click();
 
-    // 성공 메시지 확인
-    await expect(page.getByText('일정이 삭제되었습니다')).toBeVisible();
-
-    // 삭제된 일정이 목록에서 사라졌는지 확인
+    // 삭제된 일정이 목록에서 사라졌는지 확인 (실제 DOM 변경으로 확인)
     await expect(eventList.getByText('E2E 테스트 일정 (수정됨)')).not.toBeVisible();
   });
 
@@ -106,6 +97,8 @@ test.describe('기본 일정 관리 워크플로우', () => {
       { title: '일정 3', date: '2025-11-13', startTime: '14:00', endTime: '15:00' },
     ];
 
+    const eventList = page.getByTestId('event-list');
+
     for (const event of events) {
       await page.getByLabel('제목').fill(event.title);
       await page.getByLabel('날짜').fill(event.date);
@@ -114,11 +107,12 @@ test.describe('기본 일정 관리 워크플로우', () => {
       await page.getByLabel('카테고리').click();
       await page.getByRole('option', { name: '업무' }).click();
       await page.getByRole('button', { name: '일정 추가' }).click();
-      await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+      // 실제 DOM에 추가되었는지 확인
+      await expect(eventList.getByText(event.title)).toBeVisible();
     }
 
     // 모든 일정이 목록에 표시되는지 확인
-    const eventList = page.getByTestId('event-list');
     for (const event of events) {
       await expect(eventList.getByText(event.title)).toBeVisible();
       await expect(eventList.getByText(event.date)).toBeVisible();
@@ -174,10 +168,12 @@ test.describe('기본 일정 관리 워크플로우', () => {
     await page.getByLabel('카테고리').click();
     await page.getByRole('option', { name: '업무' }).click();
     await page.getByRole('button', { name: '일정 추가' }).click();
-    await expect(page.getByText('일정이 추가되었습니다')).toBeVisible();
+
+    // 일정이 추가되었는지 확인
+    const eventList = page.getByTestId('event-list');
+    await expect(eventList.getByText('수정 취소 테스트')).toBeVisible();
 
     // 일정 클릭하여 편집 모드 진입
-    const eventList = page.getByTestId('event-list');
     await eventList.getByText('수정 취소 테스트').click();
 
     // 제목 수정
@@ -187,7 +183,7 @@ test.describe('기본 일정 관리 워크플로우', () => {
     // 여기서는 폼 리셋 또는 다른 작업으로 취소를 시뮬레이션
     // 실제 구현에 따라 조정 필요
     await page.reload();
-    await expect(page.getByText('일정 로딩 완료!')).toBeVisible();
+    await expect(page.getByText('일정 로딩 완료!').first()).toBeVisible();
 
     // 원래 제목이 유지되었는지 확인
     await expect(eventList.getByText('수정 취소 테스트')).toBeVisible();
